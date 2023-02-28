@@ -1,12 +1,12 @@
 %
 %	sampling_chrr.m  Sampling ENGRO1 and ENGRO2 models by using the CHRR algorithm
 %
-%   Version 1.0 February 2023
+%	Version 1.0 February 2023
 %
 %	Authors: 
-%		- Bruno Giovanni Galuzzi<> ()
-%		- Luca Milazzo <l.milazzo1@campus.unimib.it> (DISCO)
-%		- Chiara Damiani <>
+%		- Bruno G. Galuzzi <bruno.galuzzi@unimib.it> (Department of Biotechnology and Biosciences, University of Milano-Bicocca)
+%		- Luca Milazzo <l.milazzo1@campus.unimib.it> (Department of Informatics, Systems, and Communications, University of Milano-Bicocca)
+%		- Chiara Damiani <chiara.damiani@unimib.it> (Department of Biotechnology and Biosciences, University of Milano-Bicocca)
 %
 %	Prerequisites and parameters:
 %   	- Install the Cobra Toolbox as described at https://opencobra.github.io/cobratoolbox/stable/installation.html
