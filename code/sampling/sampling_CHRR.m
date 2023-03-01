@@ -14,37 +14,41 @@
 %   
 
 addpath('PATH_TO_COBRA') % parameter 1
-initCobraToolbox
-modelNames = {'ENGRO1', 'ENGRO2'}; 
+initCobraToolbox;
+modelNames = {'ENGRO 1', 'ENGRO 2'}; 
 thinnings = {1, 10, 100};
 options.toRound=1;
 for modelNamesIndex=1:length(modelNames)
-	modelName = modelNames{modelNamesIndex}
-	mydir = strcat('.../samples/' , modelName , '/');
-	mkdir mydir;
-	cd(mydir)
-	if(modelName == "ENGRO1"){
-		model = readCbModel(strcat('.../models/',modelName),'fileType','JSON');
-	}else{
-		model = readCbModel(strcat('.../models/',modelName),'fileType','SMLB');
+	modelName = modelNames{modelNamesIndex};
+    cd('../../samples/')
+	mkdir(modelName);
+    cd('../models/');
+    model = readCbModel(modelName,'fileType','SBML');
+    reactions = model.rxns
+	if(modelName == 'ENGRO 2')
 		listReactions={'EX_O2','EX_Gln','EX_Glc','EX_Arg','EX_THF','EX_Met'};
 		model=changeRxnBounds(model,listReactions,[-38,-40,-10,-20,-20,-20],'b');
-		model=changeRxnBounds(model,listReactions,[1000],'u');
-	}
+		model=changeRxnBounds(model,listReactions,[1000],'u');	
+    end
 	model.c=0*model.c;
+    cd('../samples/')
+    cd(modelName);
 	for thinningIndex=1:length(thinnings)
-		mkdir(strcat("CHRRThinning",num2str(thinnings{thinningIndex})));
-		cd(strcat("CHRRThinning",num2str(thinnings{thinningIndex})))
+		mkdir(strcat('CHRRThinning',num2str(thinnings{thinningIndex})));
+		cd(strcat('CHRRThinning',num2str(thinnings{thinningIndex})))
 		for nSample=1000:1000:30000
+            rownames = compose('%d', 0:nSample-1);
 			options.nStepsPerPoint=thinnings{thinningIndex};
 			options.nPointsReturned=nSample;
 			for h=0:19
 				[modelsampling,samples] = sampleCbModel(model,[], 'CHRR',options); 
 				runtime=toc;
-				filename=strcat(pwd(),'\',num2str(nSample),'_',num2str(h),'_chrr' ,'.mat');
-				save(filename,'samples');
+				filename=strcat(pwd(),'\',num2str(nSample),'_',num2str(h),'_chrr' ,'.csv');
+                table = array2table(samples.', 'VariableNames', reactions, 'RowNames', rownames)
+				writetable(table, filename,'WriteRowNames',true)
 			end
 		end
-		cd(mydir)
-	end
+		cd("..");
+    end
+    cd("..")
 end
