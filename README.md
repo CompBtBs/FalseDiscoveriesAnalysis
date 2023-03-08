@@ -1,16 +1,23 @@
 # Adjusting for false discoveries in constraint- and sampling-based differential metabolic flux analysis
-## Bruno G. Galuzzi, Luca Milazzo, Chiara Damiani
->
+(Journal of Biomedical Informatics)
 
+## Authors
+- Bruno G. Galuzzi <bruno.galuzzi@unimib.it> (a, c)
+- Luca Milazzo <l.milazzo1@campus.unimib.it> (b)
+- Chiara Damiani <chiara.damiani@unimib.it> (a, c)
+
+(a) Department of Biotechnology and Biosciences, University of Milano-Bicocca, Piazza
+dell’Ateneo Nuovo, 1, Milan, 20125, Italy
+
+(b) Department of Informatics, Systems, and Communications, University of
+Milano-Bicocca, Piazza dell’Ateneo Nuovo, 1, Milan, 20125, Italy
+
+(c) SYSBIO Centre of Systems Biology/ ISBE.IT, Milan, Milan,
 
 ## Table of Contents
 * [General Information](#general-information)
 * [Technologies Used](#technologies-used)
 * [Setup and usage](#setup)
-* [Project Status](#project-status)
-* [Room for Improvement](#room-for-improvement)
-* [Acknowledgements](#acknowledgements)
-* [Contact](#contact)
 
 
 
@@ -40,21 +47,4 @@ the entire analysis pipeline. In particular, the code automatically handles
 the folders structures and files by using relative paths. It is mandatory to 
 follow the instructions reported at the beginning of each file in the "code"
 folder in order to correctly execute all the analysis.
-
-
-
-## Project Status
-Project is: _complete_ 
-
-## Room for Improvement
-
-
-Room for improvement:
-
-
-## Acknowledgements
-
-
-## Contact
-Created by 
 
