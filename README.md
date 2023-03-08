@@ -1,9 +1,10 @@
 # Adjusting for false discoveries in constraint- and sampling-based differential metabolic flux analysis
+## Bruno G. Galuzzi, Luca Milazzo, Chiara Damiani
 >
 
 
 ## Table of Contents
-* [General Info](#general-information)
+* [General Information](#general-information)
 * [Technologies Used](#technologies-used)
 * [Setup and usage](#setup)
 * [Project Status](#project-status)
@@ -15,6 +16,16 @@
 
 ## General Information
 
+![alt text](https://github.com/CompBtBs/FalseDiscoveriesAnalysis/blob/main/image.png)
+
+- Different samples of the very same feasible region of a metabolic network 
+can produce different marginal flux distributions, with the risk of false discoveries
+- For Hit-and-Run strategies, the thinning value has a higher impact on
+false discoveries than the sample size.
+- Hypothesis test on KL-divergence fully correct for false discoveries
+- Sampling the corners of a feasible region with random functions is less
+prone to false discoveries and produces marginal flux distributions dif-
+ferent from the ones of Hit-and-Run strategies.
 
 
 ## Technologies Used
