@@ -11,9 +11,9 @@
 %	Prerequisites and parameters:
 %   	- Install the Cobra Toolbox as described at https://opencobra.github.io/cobratoolbox/stable/installation.html
 %		- Fill Line 16 with the path to the installation folder of the Cobra Toolbox (parameter 1)
-%   
+%       - Set as current directory the folder in which this file is located
 
-addpath('PATH_TO_COBRA') % parameter 1
+addpath('C:\Users\LM856702\Documents\cobratoolbox\') % parameter 1
 initCobraToolbox;
 modelNames = {'ENGRO 1', 'ENGRO 2'}; 
 thinnings = {1, 10, 100};
@@ -39,8 +39,8 @@ for modelNamesIndex=1:length(modelNames)
 				[modelsampling,samples] = sampleCbModel(model,[], 'CHRR',options); 
 				runtime=toc;
 				filename=strcat(pwd(),'\',num2str(nSample),'_',num2str(h),'_chrr' ,'.csv');
-                table = array2table(samples.', 'VariableNames', reactions, 'RowNames', rownames)
-				writetable(table, filename,'WriteRowNames',true)
+                table = array2table(samples.', 'VariableNames', reactions, 'RowNames', rownames);
+				writetable(table, filename,'WriteRowNames',true);
 			end
 		end
 		cd("..");
