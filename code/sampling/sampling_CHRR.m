@@ -25,11 +25,6 @@ for modelNamesIndex=1:length(modelNames)
     cd('../models/');
     model = readCbModel(modelName,'fileType','SBML');
     reactions = model.rxns
-	if(modelName == 'ENGRO 2')
-		listReactions={'EX_O2','EX_Gln','EX_Glc','EX_Arg','EX_THF','EX_Met'};
-		model=changeRxnBounds(model,listReactions,[-38,-40,-10,-20,-20,-20],'b');
-		model=changeRxnBounds(model,listReactions,[1000],'u');	
-    end
 	model.c=0*model.c;
     cd('../samples/')
     cd(modelName);

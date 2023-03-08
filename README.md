@@ -24,6 +24,11 @@
 
 
 ## Setup and usage
+This repository was built in such a manner that allows users to easily reproduce
+the entire analysis pipeline. In particular, the code automatically handles
+the folders structures and files by using relative paths. It is mandatory to 
+follow the instructions reported at the beginning of each file in the "code"
+folder in order to correctly execute all the analysis.
 
 
 
