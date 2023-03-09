@@ -9,7 +9,7 @@ createFolder <- function(path){
 convergence <- function(models, algorithms, thinnings, executionsPerSamples, tests, samplesFolder, resultFolder){
 
   for (model in models){
-    createFolder(resultFolder + model)
+    createFolder(paste(resultFolder , model, sep = ""))
     for(test in tests){
       if(test == "geweke" || test == "raftery-lewis"){
         createFolder(paste(resultFolder , model , "/" , test, sep=""))
@@ -29,7 +29,7 @@ convergence <- function(models, algorithms, thinnings, executionsPerSamples, tes
             for(nexec in seq(0, executionsPerSamples-1, by = 1)){
               
               if(algorithm  == "cbs3"){
-                file = paste(samplesFolder , model ,"/" , algorithm , "Thinning" , thinning , "/" ,
+                file = paste(samplesFolder , model ,"/" , algorithm , "groupedBy" , thinning , "/" ,
                              nexec , "_" , 0 , "_" , algo , ".csv", sep="")
               }else{
                 file = paste(samplesFolder ,model ,"/" , algorithm , "Thinning" , thinning , "/" ,
