@@ -1,5 +1,5 @@
 # Adjusting for false discoveries in constraint- and sampling-based differential metabolic flux analysis
-(Journal of Biomedical Informatics)
+Journal of Biomedical Informatics
 
 ## Authors
 - Bruno G. Galuzzi <bruno.galuzzi@unimib.it> (a, c)
@@ -19,8 +19,6 @@ Milano-Bicocca, Piazza dell’Ateneo Nuovo, 1, Milan, 20125, Italy
 * [Technologies Used](#technologies-used)
 * [Setup and usage](#setup)
 
-
-
 ## General Information
 
 ![alt text](https://github.com/CompBtBs/FalseDiscoveriesAnalysis/blob/main/image.png)
@@ -36,9 +34,11 @@ ferent from the ones of Hit-and-Run strategies.
 
 
 ## Technologies Used
-- Jupyter - version x.x
-- Python - version x.x
-- Cobra - version x.x
+- JupyterLab - version 3.2.1
+- Python - version 3.9.7
+- Matlab - version 9.8.0.1396136
+- R - version 4.2.2
+- CobraToolBox - https://opencobra.github.io/cobratoolbox/stable/installation.html
 
 
 ## Setup and usage
