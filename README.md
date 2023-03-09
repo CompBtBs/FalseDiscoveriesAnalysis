@@ -1,5 +1,5 @@
 # Adjusting for false discoveries in constraint- and sampling-based differential metabolic flux analysis
-Journal of Biomedical Informatics
+Submitted to Journal of Biomedical Informatics
 
 ## Authors
 - Bruno G. Galuzzi <bruno.galuzzi@unimib.it> (a, c)
