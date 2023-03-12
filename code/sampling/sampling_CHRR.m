@@ -17,10 +17,14 @@ addpath('C:\Users\LM856702\Documents\cobratoolbox\') % parameter 1
 initCobraToolbox;
 modelNames = {'ENGRO 1', 'ENGRO 2'}; 
 thinnings = {1, 10, 100};
+nSampleStart = 1000;
+nSampleStep = 1000;
+nSampleEnd = 30000;
+nExecutionsPerSample = 20;
 options.toRound=1;
+cd('../../samples/');
 for modelNamesIndex=1:length(modelNames)
 	modelName = modelNames{modelNamesIndex};
-    cd('../../samples/')
 	mkdir(modelName);
     cd('../models/');
     model = readCbModel(modelName,'fileType','SBML');
@@ -31,11 +35,12 @@ for modelNamesIndex=1:length(modelNames)
 	for thinningIndex=1:length(thinnings)
 		mkdir(strcat('CHRRThinning',num2str(thinnings{thinningIndex})));
 		cd(strcat('CHRRThinning',num2str(thinnings{thinningIndex})))
-		for nSample=1000:1000:30000
+        for nSample=nSampleStart:nSampleStep:nSampleEnd
             rownames = compose('%d', 0:nSample-1);
 			options.nStepsPerPoint=thinnings{thinningIndex};
 			options.nPointsReturned=nSample;
-			for h=0:19
+            nexecution = nExecutionsPerSample-1
+            for h=0:nexecution
 				[modelsampling,samples] = sampleCbModel(model,[], 'CHRR',options); 
 				runtime=toc;
 				filename=strcat(pwd(),'\',num2str(nSample),'_',num2str(h),'_chrr' ,'.csv');

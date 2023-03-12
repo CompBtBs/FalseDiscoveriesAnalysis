@@ -1,5 +1,10 @@
 library(hash)
 library(stringr)
+library(rstudioapi)
+
+createFolder <- function(path){
+  dir.create(path, showWarnings = TRUE)
+}
 
 
 #Symmetric KLD
@@ -23,17 +28,22 @@ My_KLD <- function(P,Q){
 
 kld <- function(models, algorithms, thinnings,  pairs, samplesFolder, resultFolder){
   
+  createFolder(resultFolder)
+  
   for (model in models){
-    createFolder(paste(resultFolder , model, sep = ""))
+    createFolder(paste(resultFolder , "/", model, sep = ""))
       for (algorithm in algorithms){
         for (thinning in thinnings[[algorithm]]){
           if(algorithm  == "cbs3"){
+            createFolder(paste(resultFolder , model, "/" ,algorithm, "groupedBy", thinning , sep=""))
             createFolder(paste(resultFolder , model, "/" ,algorithm, "groupedBy", thinning , "/chunks/", sep=""))
           }else{
-            createFolder(paste(resultFolder , model, "/" , algorithm, "Thinning", thinning , "/chunks/", sep=""))
+            createFolder(paste(resultFolder , model, "/" , algorithm, "Thinning", thinning , sep=""))
+            createFolder(paste(resultFolder , model, "/" ,algorithm, "Thinning", thinning , "/chunks/", sep=""))
           }
           
-          print(paste(model, algorithm, thinning, sep = " "))
+          
+          
           
           if(algorithm == "cbs3"){
             
@@ -42,10 +52,13 @@ kld <- function(models, algorithms, thinnings,  pairs, samplesFolder, resultFold
             
           }else{
             
+           
+            
             dfTest = read.csv(file = paste(samplesFolder ,model ,"/" , algorithm , "Thinning" , thinning , "/" ,
                                            pairs[[algorithm]][[1]], ".csv" ,sep = ""),header=TRUE, row.names="X")
-            
           }
+          
+          print("ok")
           
           
           nReactions = ncol(dfTest)
@@ -57,11 +70,14 @@ kld <- function(models, algorithms, thinnings,  pairs, samplesFolder, resultFold
             
             if(algorithm == "cbs3"){
               
+              
               file1 = paste(samplesFolder ,model ,"/" , algorithm , "groupedBy" , thinning , "/" ,
                             pair[[1]] , ".csv", sep="")
               file2 = paste(samplesFolder ,model ,"/" , algorithm , "groupedBy" , thinning , "/" ,
                             pair[[2]] , ".csv", sep="")
             }else{
+              
+
               
               file1 = paste(samplesFolder ,model ,"/" , algorithm , "Thinning" , thinning , "/" ,
                             pair[[1]] , ".csv", sep="")
@@ -151,20 +167,22 @@ models <- c('ENGRO 1', 'ENGRO 2')
 algorithms <- c('achr', 'optgp', 'chrr', 'cbs3')
 
 thinnings <- hash()
-thinnings[["achr"]] <- list(1, 10, 100)
-thinnings[["optgp"]] <- list(1, 10, 100)
-thinnings[["chrr"]] <- list(1, 10, 100)
+thinnings[["achr"]] <- list(1, 2, 3)
+thinnings[["optgp"]] <- list(1, 2, 3)
+thinnings[["chrr"]] <- list(1, 2, 3)
 thinnings[["cbs3"]] <- list(1000)
 
-tests <- c('geweke', 'raftery-lewis')
 
 samples <- hash()
-samples[["achr"]] <- seq(1000, 30000, 1000)
-samples[["optgp"]] <- seq(1000, 30000, 1000)
-samples[["chrr"]] <- seq(1000, 30000, 1000)
-samples[["cbs3"]] <- list(-1)
+samples[["achr"]] <- seq(1000, 4000, 1000)
+samples[["optgp"]] <- seq(1000, 4000, 1000)
+samples[["chrr"]] <- seq(1000, 4000, 1000)
+samples[["cbs3"]] <- c(1000)
 
-executionsPerSamples = 20
+executionsPerSamples = 3
+executionsPerSamplesCbs3 = 3
+
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 samplesFolder = "../../samples/"
 
@@ -175,17 +193,22 @@ pairs <- hash()
 for (algorithm in algorithms){
   pairlist = list()
   for(nsample in samples[[algorithm]]){
-    for(nexec1 in seq(0, executionsPerSamples-2, by=1)){
-      for(nexec2 in seq(nexec1 + 1, executionsPerSamples-1, by = 1)){
+    if(algorithm == "cbs3"){
+      executionsPerSamplesUse = executionsPerSamplesCbs3
+    }else{
+      executionsPerSamplesUse = executionsPerSamples
+    }
+    for(nexec1 in seq(0, executionsPerSamplesUse-2, by=1)){
+      for(nexec2 in seq(nexec1 + 1, executionsPerSamplesUse-1, by = 1)){
         if(nexec1 != nexec2){
           if(algorithm != "cbs3"){
-            el1 = paste(nsample, nexec1, algo ,sep = "_") #1000_0_achr
-            el2 = paste(nsample, nexec2, algo ,sep = "_")
+            el1 = paste(nsample, nexec1, algorithm ,sep = "_") #1000_0_achr
+            el2 = paste(nsample, nexec2, algorithm ,sep = "_")
             pair = list(el1, el2)
             pairlist = append(pairlist, list(pair))
           }else{
-            el1 = paste(nexec1, 0, algo ,sep = "_")
-            el2 = paste(nexec2, 0, algo ,sep = "_")
+            el1 = paste(nexec1, 0, algorithm ,sep = "_")
+            el2 = paste(nexec2, 0, algorithm ,sep = "_")
             pair = list(el1, el2)
             pairlist = append(pairlist, list(pair))
           }
@@ -194,7 +217,7 @@ for (algorithm in algorithms){
       }
     }
   }
-  pairs[[algo]] = pairlist
+  pairs[[algorithm]] = pairlist
 }
 
 

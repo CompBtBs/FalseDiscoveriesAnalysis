@@ -1,18 +1,24 @@
 require(coda)
 library(data.table)
 library(hash)
+library(rstudioapi)
 
 createFolder <- function(path){
-  dir.create(path, showWarnings = FALSE)
+  dir.create(path, showWarnings = TRUE)
 }
 
-convergence <- function(models, algorithms, thinnings, executionsPerSamples, tests, samplesFolder, resultFolder){
+#3746 error for raftery Lewis--> if chain length not > 3746 --> rl = Nan
+#geweke.diag returns Nan if there is perfect convergence and -Inf with total absence of convergence
+
+convergence <- function(models, algorithms, thinnings, executionsPerSamples, executionsPerSamplesCbs3,  tests, samplesFolder, resultFolder){
 
   for (model in models){
     createFolder(paste(resultFolder , model, sep = ""))
     for(test in tests){
       if(test == "geweke" || test == "raftery-lewis"){
-        createFolder(paste(resultFolder , model , "/" , test, sep=""))
+        createFolder(paste(resultFolder,   sep=""))
+        createFolder(paste(resultFolder, model,    sep=""))
+        createFolder(paste(resultFolder , "/", model, "/" , test, sep=""))
       }else{
         return ("ERROR - test not supported")
       }
@@ -26,18 +32,30 @@ convergence <- function(models, algorithms, thinnings, executionsPerSamples, tes
           }
           
           for (nsample in samples[[algorithm]]){
-            for(nexec in seq(0, executionsPerSamples-1, by = 1)){
+            if(algorithm == "cbs3"){
+              executionsPerSamplesToUse = executionsPerSamplesCbs3 - 1
+            }else{
+              executionsPerSamplesToUse = executionsPerSamples - 1
+            }
+            for(nexec in seq(0, executionsPerSamplesToUse, by = 1)){
               
               if(algorithm  == "cbs3"){
                 file = paste(samplesFolder , model ,"/" , algorithm , "groupedBy" , thinning , "/" ,
-                             nexec , "_" , 0 , "_" , algo , ".csv", sep="")
+                             nexec , "_" , 0 , "_" , algorithm, ".csv", sep="")
               }else{
                 file = paste(samplesFolder ,model ,"/" , algorithm , "Thinning" , thinning , "/" ,
-                             nsample , "_" , nexec , "_" , algo , ".csv", sep="")
+                             nsample , "_" , nexec , "_" , algorithm, ".csv", sep="")
               }
               df=fread(file, sep=",",header = TRUE)
-              rownames(df) = df$V1
-              df$V1=NULL
+              if(algorithm == "chrr"){
+                rownames(df) = df$Row
+                df$Row=NULL
+              }else{
+                
+                rownames(df) = df$V1
+                df$V1=NULL
+              }
+              
               df_matrix=as.matrix(df)
               result_list_geweke=c()
               result_list_rl=c()
@@ -46,8 +64,6 @@ convergence <- function(models, algorithms, thinnings, executionsPerSamples, tes
                 b=as.mcmc(df_matrix[,i])
                 if(test == "geweke"){
                   result_list_geweke[i]=as.numeric(geweke.diag(b[1:nsample])$z)
-                  #3746 error --> if chain length not > 3746 --> rl = Nan
-                  #geweke.diag returns Nan if there is perfect convergence and -Inf with total absence of convergence
                 }else{
                   result_list_rl[i]= as.numeric(raftery.diag(b[1:nsample])$resmatrix[4])
                 }
@@ -69,6 +85,8 @@ convergence <- function(models, algorithms, thinnings, executionsPerSamples, tes
                 }
                 
               }else{
+                
+          
                 
                 data_final_rl <- data.frame(
                   reactions = colnames(df),
@@ -97,6 +115,39 @@ convergence <- function(models, algorithms, thinnings, executionsPerSamples, tes
   
 }
 
+##########
+models <- c('ENGRO 1', 'ENGRO 2')
+
+algorithms <- c('achr', 'optgp', 'chrr', 'cbs3')
+
+thinnings <- hash()
+thinnings[["achr"]] <- list(1, 2, 3)
+thinnings[["optgp"]] <- list(1, 2, 3)
+thinnings[["chrr"]] <- list(1, 2, 3)
+thinnings[["cbs3"]] <- list(1000)
+
+tests <- c('geweke')
+
+samples <- hash()
+samples[["achr"]] <- seq(1000, 4000, 1000)
+samples[["optgp"]] <- seq(1000, 4000, 1000)
+samples[["chrr"]] <- seq(1000, 4000, 1000)
+samples[["cbs3"]] <- c(1000)
+
+executionsPerSamples = 3
+executionsPerSamplesCbs3 = 3
+
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+samplesFolder = "../../samples/"
+
+resultFolder = "../../results/convergence/"
+
+convergence(models, algorithms, thinnings, executionsPerSamples, executionsPerSamplesCbs3,  tests, samplesFolder, resultFolder)
+
+########
+
+
 models <- c('ENGRO 1', 'ENGRO 2')
 
 algorithms <- c('achr', 'optgp', 'chrr', 'cbs3')
@@ -116,6 +167,9 @@ samples[["chrr"]] <- seq(1000, 30000, 1000)
 samples[["cbs3"]] <- list(-1)
 
 executionsPerSamples = 20
+executionsPerSamplesCbs3 = 20
+
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 samplesFolder = "../../samples/"
 
@@ -125,5 +179,7 @@ convergence(models, algorithms, thinnings, executionsPerSamples, tests, samplesF
 
 
 
+df=fread("C:/Users/LM856702/Documents/FalseDiscoveriesAnalysis/samples/ENGRO 1/achrThinning1/1000_0_achr.csv" , sep=",",header = TRUE)
+df_chrr=fread("C:/Users/LM856702/Documents/FalseDiscoveriesAnalysis/samples/ENGRO 1/chrrThinning1/1000_0_chrr.csv" , sep=",",header = TRUE)
 
 
