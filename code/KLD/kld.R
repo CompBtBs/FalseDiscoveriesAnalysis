@@ -26,13 +26,18 @@ My_KLD <- function(P,Q){
 
 
 
-kld <- function(models, algorithms, thinnings,  pairs, samplesFolder, resultFolder){
+kld <- function(models, algorithms, thinnings,  pairs, samplesFolder, resultFolder, chunkCut){
   
   createFolder(resultFolder)
   
   for (model in models){
     createFolder(paste(resultFolder , "/", model, sep = ""))
       for (algorithm in algorithms){
+        if(algorithm == "chrr"){
+          rowNames = "Row"
+        }else{
+          rowNames = "X"
+        }
         for (thinning in thinnings[[algorithm]]){
           if(algorithm  == "cbs3"){
             createFolder(paste(resultFolder , model, "/" ,algorithm, "groupedBy", thinning , sep=""))
@@ -44,27 +49,31 @@ kld <- function(models, algorithms, thinnings,  pairs, samplesFolder, resultFold
           
           
           
-          
           if(algorithm == "cbs3"){
             
             dfTest = read.csv(file = paste(samplesFolder ,model ,"/" , algorithm , "groupedBy" , thinning , "/" ,
-                                           pairs[[algorithm]][[1]], ".csv" ,sep = ""),header=TRUE, row.names="X")
+                                           pairs[[algorithm]][[1]][1], ".csv" ,sep = ""),header=TRUE,  row.names=rowNames)
             
           }else{
             
+          
+            
+              dfTest = read.csv(file = paste(samplesFolder ,model ,"/" , algorithm , "Thinning" , thinning , "/" ,
+                                             pairs[[algorithm]][[1]][1], ".csv" ,sep = ""),header=TRUE, row.names=rowNames)
            
             
-            dfTest = read.csv(file = paste(samplesFolder ,model ,"/" , algorithm , "Thinning" , thinning , "/" ,
-                                           pairs[[algorithm]][[1]], ".csv" ,sep = ""),header=TRUE, row.names="X")
+            
+        
           }
           
-          print("ok")
-          
+         
+         
           
           nReactions = ncol(dfTest)
           chunk = 0
-          result_df = data.frame(matrix(ncol = nReactions, nrow = 0))
+          result_df = data.frame(matrix(ncol = nReactions + 1 , nrow = 0))
           colnames(result_df) = append(list("pair") , colnames(dfTest))
+          
           
           for (pair in pairs[[algorithm]]){
             
@@ -86,8 +95,8 @@ kld <- function(models, algorithms, thinnings,  pairs, samplesFolder, resultFold
             }
             
             
-            df1 = read.csv(file = file1, header=TRUE, row.names="X")
-            df2 = read.csv(file = file2, header=TRUE, row.names="X")
+            df1 = read.csv(file = file1, header=TRUE, row.names=rowNames)
+            df2 = read.csv(file = file2, header=TRUE,  row.names=rowNames)
             
             resList = list(paste(pair[[1]] ,pair[[2]], sep = "_"))
             
@@ -103,7 +112,7 @@ kld <- function(models, algorithms, thinnings,  pairs, samplesFolder, resultFold
             
             result_df[nrow(result_df) + 1,] <- resList
             
-            if(nrow(result_df)==50){
+            if(nrow(result_df)==chunkCut){
               if(algorithm  == "cbs3"){
                 write.csv(result_df, paste( resultFolder , model, "/" ,algorithm, "groupedBy", thinning , "/chunks/" , "chunk_", 
                                             chunk, ".csv", sep = ""), row.names = TRUE)
@@ -112,7 +121,7 @@ kld <- function(models, algorithms, thinnings,  pairs, samplesFolder, resultFold
                                             chunk, ".csv", sep = ""), row.names = TRUE)
               }
              
-              result_df = data.frame(matrix(ncol = nReactions, nrow = 0))
+              result_df = data.frame(matrix(ncol = nReactions + 1, nrow = 0))
               colnames(result_df) = append(list("pair") ,colnames(dfTest))
               chunk = chunk + 1
             }
@@ -166,6 +175,7 @@ models <- c('ENGRO 1', 'ENGRO 2')
 
 algorithms <- c('achr', 'optgp', 'chrr', 'cbs3')
 
+
 thinnings <- hash()
 thinnings[["achr"]] <- list(1, 2, 3)
 thinnings[["optgp"]] <- list(1, 2, 3)
@@ -187,6 +197,8 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 samplesFolder = "../../samples/"
 
 resultFolder = "../../results/KLD/"
+
+chunkCut = 3
 
 pairs <- hash()
 
@@ -221,4 +233,4 @@ for (algorithm in algorithms){
 }
 
 
-kld(models, algorithms, thinnings,  pairs, samplesFolder, resultFolder)
+kld(models, algorithms, thinnings,  pairs, samplesFolder, resultFolder , chunkCut)
