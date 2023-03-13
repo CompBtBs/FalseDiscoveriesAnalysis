@@ -1,5 +1,5 @@
 # Adjusting for false discoveries in constraint- and sampling-based differential metabolic flux analysis
-Submitted to Journal of Biomedical Informatics
+Submitted to: Journal of Biomedical Informatics
 
 ## Authors
 - Bruno G. Galuzzi <bruno.galuzzi@unimib.it> (a, c)
@@ -47,4 +47,15 @@ the entire analysis pipeline. In particular, the code automatically handles
 the folders structures and files by using relative paths. It is mandatory to 
 follow the instructions reported at the beginning of each file in the "code"
 folder in order to correctly execute all the analysis.
+The following execution order shall be respected:
+- sampling.ipynb
+- sampling_CHRR.mat
+- KLD.R
+- KLD.ipynb
+- convergence.R
+- convergence.ipynb
+- FDR.ipynb
+- CHRR_CBS3.ipynb
+- visualization.ipynb
+
 
