@@ -1,15 +1,44 @@
+###############################################
+#
+# convergence.R  Geweke and Raftery-lewis tests for convergence
+#
+# Version 1.0 February 2023
+#
+# Authors: 
+#    - Bruno G. Galuzzi <bruno.galuzzi@unimib.it> (Department of Biotechnology and Biosciences, University of Milano-Bicocca)
+#    - Luca Milazzo <l.milazzo1@campus.unimib.it> (Department of Informatics, Systems, and Communications, University of Milano-Bicocca)
+#    - Chiara Damiani <chiara.damiani@unimib.it> (Department of Biotechnology and Biosciences, University of Milano-Bicocca)
+#
+###############################################
+
 require(coda)
 library(data.table)
 library(hash)
 library(rstudioapi)
 
+# Function used to create a new folder by the path parameter
 createFolder <- function(path){
   dir.create(path, showWarnings = TRUE)
 }
 
-#3746 error for raftery Lewis--> if chain length not > 3746 --> rl = Nan
-#geweke.diag returns Nan if there is perfect convergence and -Inf with total absence of convergence
 
+
+# Computes the convergence coefficients of the sampled fluxes
+# with the Geweke and Raftery-Lewis diagnostics
+# Parameters
+# - models --> models names
+# - algorithms --> list of algorithms
+# - thinnings --> list of thinnings
+# - executionsPerSamples --> executions per samples
+# - executionsPerSamplesCbs3 --> executions per samples for CBS3
+# - tests --> list of diagnostic to compute
+# - samplesFolder --> target folder for all the samples
+# - resultFolder --> target folder for the results
+# Notes:
+# - It is not possibile to compute the raftery Lewis coefficients when the chain
+# has a length smaller than 3746 samples (it will return Nan values).
+# - The geweke.diag function returns Nan if there is perfect convergence and
+# -Inf with a total absence of convergence.
 convergence <- function(models, algorithms, thinnings, executionsPerSamples, executionsPerSamplesCbs3,  tests, samplesFolder, resultFolder){
 
   for (model in models){
@@ -115,39 +144,6 @@ convergence <- function(models, algorithms, thinnings, executionsPerSamples, exe
   
 }
 
-##########
-models <- c('ENGRO 1', 'ENGRO 2')
-
-algorithms <- c('achr', 'optgp', 'chrr', 'cbs3')
-
-thinnings <- hash()
-thinnings[["achr"]] <- list(1, 2, 3)
-thinnings[["optgp"]] <- list(1, 2, 3)
-thinnings[["chrr"]] <- list(1, 2, 3)
-thinnings[["cbs3"]] <- list(1000)
-
-tests <- c('geweke')
-
-samples <- hash()
-samples[["achr"]] <- seq(1000, 4000, 1000)
-samples[["optgp"]] <- seq(1000, 4000, 1000)
-samples[["chrr"]] <- seq(1000, 4000, 1000)
-samples[["cbs3"]] <- c(1000)
-
-executionsPerSamples = 3
-executionsPerSamplesCbs3 = 3
-
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-
-samplesFolder = "../../samples/"
-
-resultFolder = "../../results/convergence/"
-
-convergence(models, algorithms, thinnings, executionsPerSamples, executionsPerSamplesCbs3,  tests, samplesFolder, resultFolder)
-
-########
-
-
 models <- c('ENGRO 1', 'ENGRO 2')
 
 algorithms <- c('achr', 'optgp', 'chrr', 'cbs3')
@@ -164,7 +160,7 @@ samples <- hash()
 samples[["achr"]] <- seq(1000, 30000, 1000)
 samples[["optgp"]] <- seq(1000, 30000, 1000)
 samples[["chrr"]] <- seq(1000, 30000, 1000)
-samples[["cbs3"]] <- list(-1)
+samples[["cbs3"]] <- c(1000)
 
 executionsPerSamples = 20
 executionsPerSamplesCbs3 = 20
@@ -175,11 +171,4 @@ samplesFolder = "../../samples/"
 
 resultFolder = "../../results/convergence/"
 
-convergence(models, algorithms, thinnings, executionsPerSamples, tests, samplesFolder, resultFolder)
-
-
-
-df=fread("C:/Users/LM856702/Documents/FalseDiscoveriesAnalysis/samples/ENGRO 1/achrThinning1/1000_0_achr.csv" , sep=",",header = TRUE)
-df_chrr=fread("C:/Users/LM856702/Documents/FalseDiscoveriesAnalysis/samples/ENGRO 1/chrrThinning1/1000_0_chrr.csv" , sep=",",header = TRUE)
-
-
+convergence(models, algorithms, thinnings, executionsPerSamples, executionsPerSamplesCbs3,  tests, samplesFolder, resultFolder)

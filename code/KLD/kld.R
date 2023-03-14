@@ -39,7 +39,7 @@ My_KLD <- function(P,Q){
 }
 
 
-# Computed the symmetric KLD of the sampled fluxes
+# Computes the symmetric KLD of the sampled fluxes
 # Parameters
 # - models --> models names
 # - algorithms --> list of algorithms
