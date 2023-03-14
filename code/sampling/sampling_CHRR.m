@@ -16,7 +16,7 @@
 addpath('C:\Users\LM856702\Documents\cobratoolbox\') % parameter 1
 initCobraToolbox;
 modelNames = {'ENGRO 1', 'ENGRO 2'}; 
-thinnings = {1, 10, 100};
+thinnings = {1, 5, 10, 30, 100};
 nSampleStart = 1000;
 nSampleStep = 1000;
 nSampleEnd = 30000;
