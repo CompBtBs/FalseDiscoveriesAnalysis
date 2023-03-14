@@ -1,14 +1,28 @@
+###############################################
+#
+# kld.R  Kullback Leibler Divergence
+#
+# Version 1.0 February 2023
+#
+# Authors: 
+#    - Bruno G. Galuzzi <bruno.galuzzi@unimib.it> (Department of Biotechnology and Biosciences, University of Milano-Bicocca)
+#    - Luca Milazzo <l.milazzo1@campus.unimib.it> (Department of Informatics, Systems, and Communications, University of Milano-Bicocca)
+#    - Chiara Damiani <chiara.damiani@unimib.it> (Department of Biotechnology and Biosciences, University of Milano-Bicocca)
+#
+###############################################
+
+
 library(hash)
 library(stringr)
 library(rstudioapi)
 
+# Function used to create a new folder by the path parameter
 createFolder <- function(path){
   dir.create(path, showWarnings = TRUE)
 }
 
 
-#Symmetric KLD
-
+#KLD computation between two samples of a flux
 My_KLD <- function(P,Q){
   p <- P$y
   q <- Q$y
@@ -25,7 +39,15 @@ My_KLD <- function(P,Q){
 }
 
 
-
+# Computed the symmetric KLD of the sampled fluxes
+# Parameters
+# - models --> models names
+# - algorithms --> list of algorithms
+# - thinnings --> list of thinnings
+# - pairs --> hash containing all the samples file to test in pairs
+# - samplesFolder --> target folder for all the samples
+# - resultFolder --> target folder for the results
+# - chunkCut --> rows number for each chunk produced to save memory
 kld <- function(models, algorithms, thinnings,  pairs, samplesFolder, resultFolder, chunkCut){
   
   createFolder(resultFolder)
@@ -170,27 +192,26 @@ kld <- function(models, algorithms, thinnings,  pairs, samplesFolder, resultFold
 }
 
 
-
 models <- c('ENGRO 1', 'ENGRO 2')
 
 algorithms <- c('achr', 'optgp', 'chrr', 'cbs3')
 
 
 thinnings <- hash()
-thinnings[["achr"]] <- list(1, 2, 3)
-thinnings[["optgp"]] <- list(1, 2, 3)
-thinnings[["chrr"]] <- list(1, 2, 3)
+thinnings[["achr"]] <- list(1, 10, 100)
+thinnings[["optgp"]] <- list(1, 10, 100)
+thinnings[["chrr"]] <- list(1, 10, 100)
 thinnings[["cbs3"]] <- list(1000)
 
 
 samples <- hash()
-samples[["achr"]] <- seq(1000, 4000, 1000)
-samples[["optgp"]] <- seq(1000, 4000, 1000)
-samples[["chrr"]] <- seq(1000, 4000, 1000)
+samples[["achr"]] <- seq(1000, 30000, 1000)
+samples[["optgp"]] <- seq(1000, 30000, 1000)
+samples[["chrr"]] <- seq(1000, 30000, 1000)
 samples[["cbs3"]] <- c(1000)
 
-executionsPerSamples = 3
-executionsPerSamplesCbs3 = 3
+executionsPerSamples = 20
+executionsPerSamplesCbs3 = 20
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
@@ -198,7 +219,7 @@ samplesFolder = "../../samples/"
 
 resultFolder = "../../results/KLD/"
 
-chunkCut = 3
+chunkCut = 10
 
 pairs <- hash()
 
